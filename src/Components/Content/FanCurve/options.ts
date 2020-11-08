@@ -4,25 +4,22 @@ import { ChartConfiguration } from 'chart.js';
 import 'chartjs-plugin-dragdata';
 import { Chart } from 'chart.js';
 
-const buildConfiguration = () => {
+const buildConfiguration = (
+	values: number[],
+	onChange: (key: string, index: number, val: number) => any,
+	chartId: string
+) => {
 	const chartConfig: ChartConfiguration = {
 		type: 'line', // or radar, bar, horizontalBar, bubble
 		data: {
 			datasets: [
 				{
-					label: 'Fan Curve',
-					data: [33, 53, 85, 41, 44, 65, 0, 0, 0, 0, 0],
+					label:
+						chartId === 'fanCurveChartCPU' ? 'CPU Fan Curve' : 'GPU Fan Curve',
+					data: values,
 					fill: false,
-					backgroundColor: 'rgba(75,192,192,0.2)',
-					borderColor: 'rgba(75,192,192,1)',
-					pointHitRadius: 25,
-				},
-				{
-					label: 'New Fan Curve',
-					data: [33, 35, 45, 49, 65, 65, 65, 65, 65, 65, 65],
-					fill: false,
-					borderColor: '#742774',
-					pointHitRadius: 25,
+					pointHitRadius: 30,
+					borderColor: 'red',
 				},
 			],
 		},
@@ -30,27 +27,6 @@ const buildConfiguration = () => {
 			// the rest of your chart options, e.g. axis configuration
 			scales: {
 				yAxes: [
-					{
-						labels: [
-							'0c',
-							'10c',
-							'20c',
-							'30c',
-							'40c',
-							'50c',
-							'60c',
-							'70c',
-							'80c',
-							'90c',
-							'100c',
-						],
-						ticks: {
-							suggestedMin: 0,
-							suggestedMax: 100,
-						},
-					},
-				],
-				xAxes: [
 					{
 						labels: [
 							'0%',
@@ -71,6 +47,21 @@ const buildConfiguration = () => {
 						},
 					},
 				],
+				xAxes: [
+					{
+						labels: ['30c', '40c', '50c', '60c', '70c', '80c', '90c', '100c'],
+
+						ticks: {
+							suggestedMin: 30,
+							suggestedMax: 100,
+						},
+					},
+				],
+			},
+			elements: {
+				line: {
+					tension: 0.1,
+				},
 			},
 			//@ts-ignore
 
@@ -99,12 +90,13 @@ const buildConfiguration = () => {
 			},
 			onDragEnd: function (
 				e: { target: { style: { cursor: string } } },
-				datasetIndex: any,
+				datasetIndex: number,
 				index: any,
 				value: any
 			) {
 				// restore default cursor style upon drag release
 				e.target.style.cursor = 'default';
+				onChange(chartId, index, value);
 				// where e = event
 			},
 			hover: {
@@ -112,6 +104,7 @@ const buildConfiguration = () => {
 					// indicate that a datapoint is draggable by showing the 'grab' cursor when hovered
 					//@ts-ignore
 					const point = this.getElementAtEvent(e);
+
 					if (point.length) e.target.style.cursor = 'grab';
 					else e.target.style.cursor = 'default';
 				},
@@ -123,10 +116,11 @@ const buildConfiguration = () => {
 
 export const createChart = (
 	chartId: string,
-	chartData?: { type: any; data: any; options: any }
+	listener: (x: any, y: any, z: any) => any,
+	chartData: number[]
 ) => {
 	const ctx = document.getElementById(chartId) as HTMLCanvasElement;
-	const options = buildConfiguration();
+	const options = buildConfiguration(chartData, listener, chartId);
 	const chart = new Chart(ctx, {
 		...options,
 	});

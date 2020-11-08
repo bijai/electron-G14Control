@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { Component } from 'react';
-import { Button, Form, InputNumber, PageHeader } from 'antd';
+import { Button, Form, InputNumber, PageHeader, message } from 'antd';
 // import RyzenadjConfig from '../../react-app-env';
 interface Props {}
 
@@ -15,9 +15,35 @@ export default class RyzenADJ extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
-			ryzenadjConfig: {},
+			ryzenadjConfig: {
+				fastLimit: 40000,
+				slowLimit: 35000,
+				stapmLimit: 35000,
+				stapmTime: 5,
+				slowTime: 30,
+				tctlTemp: 95,
+			},
 		};
 	}
+
+	onSubmit = async () => {
+		let { ryzenadjConfig } = this.state;
+		let msg = message.loading({
+			content: 'Applying settings...',
+		});
+		let result = await window.ipcRenderer.invoke('setRyzenadj', ryzenadjConfig);
+		if (result) {
+			//@ts-ignore
+			msg.then(() => {
+				message.success('Successfully applied cpu settings!');
+			});
+		} else {
+			//@ts-ignore
+			msg.then(() => {
+				message.error('Failed to apply cpu settings.');
+			});
+		}
+	};
 
 	onInputChange = (
 		event: string | number | undefined,
@@ -51,10 +77,6 @@ export default class RyzenADJ extends Component<Props, State> {
 				this.setState({ ryzenadjConfig });
 				break;
 		}
-	};
-
-	check = () => {
-		console.log(this.state.ryzenadjConfig);
 	};
 
 	render() {
@@ -124,7 +146,7 @@ export default class RyzenADJ extends Component<Props, State> {
 					/>
 				</Form.Item>
 				<Form.Item>
-					<Button onClick={this.check}>Test</Button>
+					<Button onClick={this.onSubmit}>Submit</Button>
 				</Form.Item>
 			</Form>
 		);

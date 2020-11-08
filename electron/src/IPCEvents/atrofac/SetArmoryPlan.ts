@@ -2,13 +2,14 @@
 
 import { exec } from 'child_process';
 import getLogger from '../../Logger';
-
+import dotenv from 'dotenv';
+dotenv.config();
 const ATRO_LOC = process.env.ATRO_LOC;
 
 const LOGGER = getLogger('SetArmoryPlan');
 
 export const modifyArmoryCratePlan = async (plan: ArmoryPlan) => {
-	return new Promise((resolve, reject) => {
+	return new Promise<ArmoryPlan | false>((resolve, reject) => {
 		exec(`${ATRO_LOC} --plan ${plan}`, (err, out, stderr) => {
 			if (err || stderr) {
 				LOGGER.info(

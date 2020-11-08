@@ -2,40 +2,23 @@
 
 import { exec } from 'child_process';
 import getLogger from '../../Logger';
-
-const RADJ_LOC =
-	'C:\\Users\\alexa\\Documents\\G14UI\\g14ui\\electron\\ryzenadj\\ryzenadj.exe';
+import dotenv from 'dotenv';
+import { kebabCase } from 'lodash';
+dotenv.config();
+const RADJ_LOC = process.env.RADJ_LOC;
 
 const LOGGER = getLogger('RyzenADJ');
 
 export const setRyzenadj = (config: RyzenadjConfig) => {
 	return new Promise<RyzenadjConfig | false>((resolve) => {
-		let radjStr = `${RADJ_LOC} `;
-		let {
-			stapmLimit,
-			fastLimit,
-			slowLimit,
-			stapmTime,
-			slowTime,
-			tctlTemp,
-		} = config;
-		if (stapmLimit) {
-			radjStr += `--stapm-limit ${stapmLimit} `;
-		}
-		if (fastLimit) {
-			radjStr += `--fast-limit ${fastLimit} `;
-		}
-		if (slowLimit) {
-			radjStr += `--slow-limit ${slowLimit} `;
-		}
-		if (stapmTime) {
-			radjStr += `--stapm-time ${stapmTime} `;
-		}
-		if (slowTime) {
-			radjStr += `--slow-time ${slowTime} `;
-		}
-		if (tctlTemp) {
-			radjStr += `--tctl-temp ${tctlTemp} `;
+		let radjStr = '';
+
+		Object.keys(config).forEach((value) => {
+			radjStr +=
+				value && config[value] ? `--${kebabCase(value)} ${config[value]} ` : '';
+		});
+		if (radjStr.length === 0) {
+			return false;
 		}
 		exec(`${RADJ_LOC} ${radjStr}`, (err, out, stderr) => {
 			if (err || stderr) {

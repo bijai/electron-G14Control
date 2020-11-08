@@ -2,6 +2,10 @@
 
 # G14Control Windows Desktop App
 
+Pre-alpha sample styling:
+
+![example image](https://i.ibb.co/WVDhjLb/g14control-electron-sample.png)
+
 ## Prerequisites
 
 The `/electron` directory requires a `.env` file with two entries for the executables under `electron/atrofac-cli/` and `electron/ryzenadj/`. It should be structured as follows:
@@ -9,6 +13,7 @@ The `/electron` directory requires a `.env` file with two entries for the execut
 ```
 ATRO_LOC=<C:/path/to/atrofac-cli.exe>
 RADJ_LOC=<C:/path/to/ryzenadj.exe>
+CONFIG_LOC=<C:/path/to/electron/src/config.json>
 ```
 
 ## Dev Startup
@@ -38,12 +43,14 @@ This is just a starting list. I'm sure there is much more to do.
 - Main window styling and suggestions.
 - Allow user to choose temperature polling time.
 - Improved code commenting.
-- FanCurve page front end logic -- the ipcRenderer listener functions under /electron are already built.
-- Persistent storage for configuration and runtime events.
+- FanCurve page front end logic -- the ipcRenderer listener functions under /electron are already built. _In progess_
+- Persistent storage for configuration and runtime events. _In progress_
 - Status page design and relevent data to show.
 - Add settings page for more options such as "exit on window close" vs "run as icon app on window close", etc.
 - Header main page custom exit and minimize buttons, as well as possible dropdown menu (could use this as a 'settings page')
+
   ...
+
 - Eventually add G14Control plans configuration.
 
 ## License
@@ -53,5 +60,9 @@ This is just a starting list. I'm sure there is much more to do.
 ## Major Contributors
 
 https://github.com/thesacredmoocow/g14control-r2 (g14control's previous maintainer)
+
 https://github.com/FlyGoat/RyzenAdj (adjusting tdp)
+
 https://github.com/cronosun/atrofac (fan profiles)
+
+- advanced cli configuration [documentation](https://github.com/cronosun/atrofac/blob/master/ADVANCED.md).
